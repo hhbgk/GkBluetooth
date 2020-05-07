@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".cbt.ClassicBtClientFragment">
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:onClick="rescan"
+        android:text="@string/reScan" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_bt"
+        android:layout_width="match_parent"
+        android:layout_height="186dp"
+        android:background="@drawable/stroke"
+        android:padding="2dp" />
+
+    <TextView
+        android:id="@+id/tv_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp" />
+
+    <include layout="@layout/bluetooth_send" />
+</FrameLayout>

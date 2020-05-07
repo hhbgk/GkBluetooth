@@ -1,0 +1,3 @@
+rootProject.name='GkBluetooth'
+include ':app'
+include ':bluetoothkit'

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GkBluetooth</string>
+    <string name="bt_client">BT client</string>
+    <string name="bt_server">BT server</string>
+    <string name="ble_client">BLE client(Host/Central)</string>
+    <string name="ble_server">BLE server(Slave/peripheral)</string>
+    <string name="bt">Classic bluetooth(BT)</string>
+    <string name="ble">Bluetooth Low Energy(BLE)</string>
+    <string name="reScan">Rescan</string>
+    <string name="read">Read</string>
+    <string name="setNotify">Set up notifications</string>
+    <string name="max_byte">Up to 20 bytes</string>
+    <string name="write">Write</string>
+    <string name="bonded">Paired</string>
+    <string name="not_bonded">Unpaired</string>
+</resources>
