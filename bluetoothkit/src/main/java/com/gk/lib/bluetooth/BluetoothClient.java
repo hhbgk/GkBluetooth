@@ -1,11 +1,13 @@
 package com.gk.lib.bluetooth;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
 import com.gk.lib.bluetooth.cbt.CbtClientImpl;
 
 import java.lang.ref.SoftReference;
+import java.util.Set;
 
 /**
  * Des:
@@ -38,6 +40,26 @@ public final class BluetoothClient implements IBluetooth {
             throw new IllegalStateException("Invoke initialize() first!");
         }
         client = new CbtClientImpl(softReference.get());
+    }
+
+    @Override
+    public Set<BluetoothDevice> getBondedDevices() {
+        return client.getBondedDevices();
+    }
+
+    @Override
+    public void connect(BluetoothDevice device) {
+        client.connect(device);
+    }
+
+    @Override
+    public void disconnect(BluetoothDevice device) {
+        client.disconnect(device);
+    }
+
+    @Override
+    public boolean isConnected(BluetoothDevice device) {
+        return client.isConnected(device);
     }
 
     @Override

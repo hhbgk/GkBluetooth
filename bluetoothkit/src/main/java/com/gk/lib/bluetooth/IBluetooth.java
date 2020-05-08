@@ -1,6 +1,10 @@
 package com.gk.lib.bluetooth;
 
+import android.bluetooth.BluetoothDevice;
+
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
+
+import java.util.Set;
 
 /**
  * Des:
@@ -9,6 +13,10 @@ import com.gk.lib.bluetooth.callback.OnBluetoothListener;
  * UpdateRemark:
  */
 public interface IBluetooth {
+    Set<BluetoothDevice> getBondedDevices();
+    void connect(BluetoothDevice device);
+    void disconnect(BluetoothDevice device);
+    boolean isConnected(BluetoothDevice device);
     void startScanning();
     void stopScanning();
     void registerBluetoothListener(OnBluetoothListener listener);
