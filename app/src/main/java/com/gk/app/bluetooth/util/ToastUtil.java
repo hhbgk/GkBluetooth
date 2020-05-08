@@ -23,7 +23,7 @@ public class ToastUtil {
             throw new RuntimeException("u have not init toast utils");
         }
         if (contextWeakReference.get() == null) {
-            GLog.e(tag, "contextWeakReference.get is null ");
+            GkLog.e(tag, "contextWeakReference.get is null");
             return;
         }
         if (!TextUtils.isEmpty(msg) && duration >= 0) {

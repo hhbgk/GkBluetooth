@@ -8,7 +8,7 @@ import android.util.Log;
  * Date:20-5-7
  * UpdateRemark:
  */
-public final class GLog {
+public final class GkLog {
     private static boolean IS_DEBUG = true;
 
     public static void openOrCloseDebug(boolean isOpen) {

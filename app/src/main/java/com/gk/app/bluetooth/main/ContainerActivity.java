@@ -15,7 +15,7 @@ import com.gk.app.bluetooth.ble.BleClientFragment;
 import com.gk.app.bluetooth.ble.BleServerFragment;
 import com.gk.app.bluetooth.cbt.ClassicBtClientFragment;
 import com.gk.app.bluetooth.cbt.ClassicBtServerFragment;
-import com.gk.app.bluetooth.util.GLog;
+import com.gk.app.bluetooth.util.GkLog;
 
 public class ContainerActivity extends BaseActivity {
     private String tag = getClass().getSimpleName();
@@ -71,7 +71,7 @@ public class ContainerActivity extends BaseActivity {
         if(!TextUtils.isEmpty(targetName)) {
             changeFragment(fragment, targetName);
         }else{
-            GLog.e(tag, "Target name cannot be null");
+            GkLog.e(tag, "Target name cannot be null");
         }
     }
 

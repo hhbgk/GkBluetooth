@@ -18,7 +18,7 @@ import com.gk.app.bluetooth.R;
 import com.gk.app.bluetooth.adapter.DeviceAdapter;
 import com.gk.app.bluetooth.base.BaseFragment;
 import com.gk.app.bluetooth.listener.OnItemClickListener;
-import com.gk.app.bluetooth.util.GLog;
+import com.gk.app.bluetooth.util.GkLog;
 import com.gk.lib.bluetooth.BluetoothClient;
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
 
@@ -79,44 +79,54 @@ public class ClassicBtClientFragment extends BaseFragment implements View.OnClic
     private final OnBluetoothListener onBluetoothListener = new OnBluetoothListener() {
         @Override
         public void onAclConnected(BluetoothDevice device) {
-            GLog.i(tag, "onAclConnected:" + device.getName());
+            GkLog.i(tag, "onAclConnected:" + device.getName());
         }
 
         @Override
         public void onAclDisconnected(BluetoothDevice device) {
-            GLog.i(tag, "onAclDisconnected:" + device.getName());
+            GkLog.i(tag, "onAclDisconnected:" + device.getName());
         }
 
         @Override
         public void onBondStateChanged(BluetoothDevice device, int state) {
-            GLog.i(tag, "onBondStateChanged:" + device.getName() + ", " + state);
+            GkLog.i(tag, "onBondStateChanged:" + device.getName() + ", " + (state==BluetoothDevice.BOND_BONDED));
         }
 
         @Override
         public void onConnectionStateChanged(BluetoothDevice device, int state) {
-            GLog.i(tag, "onConnectionStateChanged:" + device.getName() + ", " + state);
+            GkLog.i(tag, "onConnectionStateChanged:" + device.getName() + ", " + state);
         }
 
         @Override
         public void onScanningStart() {
-            GLog.i(tag, "onScanningStart");
+            GkLog.i(tag, "onScanningStart");
         }
 
         @Override
         public void onScanningStop() {
-            GLog.i(tag, "onScanningStop");
+            GkLog.i(tag, "onScanningStop");
         }
 
         @Override
         public void onFound(BluetoothDevice device) {
-            GLog.i(tag, "onFound:" + device.getName() + ":" + device.getAddress());
+            GkLog.i(tag, "onFound:" + device.getName() + ", type=" + device.getType());
             mAdapter.add(device);
             mAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onSwitchStateChanged(int state) {
-            GLog.i(tag, "onSwitchStateChanged:" + state);
+            GkLog.i(tag, "onSwitchStateChanged:" + state);
+        }
+
+        @Override
+        public void onConnectDeviceSuccess(BluetoothDevice device) {
+            GkLog.i(tag, "onConnectDeviceSuccess:" + device.getName());
+        }
+
+        @Override
+        public void onConnectDeviceFailure(BluetoothDevice device, String msg) {
+            GkLog.e(tag, "onConnectDeviceFailure:" + device.getName() + ", " + msg);
         }
     };
 
@@ -124,7 +134,8 @@ public class ClassicBtClientFragment extends BaseFragment implements View.OnClic
             = new OnItemClickListener<BluetoothDevice>() {
         @Override
         public void onItemClick(View view, BluetoothDevice device, int position) {
-            GLog.e(tag, "onItemClick:" + BluetoothClient.getInstance().isConnected(device));
+            GkLog.e(tag, "onItemClick:" + BluetoothClient.getInstance().isConnected(device)
+            + ", getType=" + device.getType());
             BluetoothClient.getInstance().connect(device);
         }
 
