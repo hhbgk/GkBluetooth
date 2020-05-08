@@ -1,6 +1,6 @@
 package com.gk.lib.bluetooth.engine.listener;
 
-import android.bluetooth.BluetoothSocket;
+import com.gk.lib.bluetooth.bean.BluetoothInfo;
 
 /**
  * Des:
@@ -9,6 +9,6 @@ import android.bluetooth.BluetoothSocket;
  * UpdateRemark:
  */
 public interface ConnectDeviceListener {
-    void onConnectDeviceSuccess(BluetoothSocket socket);
-    void onConnectDeviceFailure(BluetoothSocket socket, String msg);
+    void onConnectDeviceSuccess(BluetoothInfo bluetoothInfo);
+    void onConnectDeviceFailure(BluetoothInfo bluetoothInfo, String msg);
 }

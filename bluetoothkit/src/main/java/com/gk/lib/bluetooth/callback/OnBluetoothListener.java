@@ -9,7 +9,7 @@ import android.bluetooth.BluetoothDevice;
  * UpdateRemark:
  */
 public abstract class OnBluetoothListener implements ScanningCallback, SwitchStateCallback,
-        ConnectionStateCallback, BondSateCallback, AclStateCallback {
+        ConnectionStateCallback, BondSateCallback, AclStateCallback, ConnectDeviceCallback {
     @Override
     public void onAclConnected(BluetoothDevice device) {
 
@@ -47,6 +47,16 @@ public abstract class OnBluetoothListener implements ScanningCallback, SwitchSta
 
     @Override
     public void onSwitchStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onConnectDeviceSuccess(BluetoothDevice device) {
+
+    }
+
+    @Override
+    public void onConnectDeviceFailure(BluetoothDevice device, String msg) {
 
     }
 }

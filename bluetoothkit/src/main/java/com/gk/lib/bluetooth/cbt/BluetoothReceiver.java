@@ -163,4 +163,8 @@ public final class BluetoothReceiver extends BroadcastReceiver {
     public void setOnBluetoothListener(OnBluetoothListener listener) {
         onBluetoothListener = listener;
     }
+
+    public OnBluetoothListener getBluetoothListener() {
+        return onBluetoothListener;
+    }
 }

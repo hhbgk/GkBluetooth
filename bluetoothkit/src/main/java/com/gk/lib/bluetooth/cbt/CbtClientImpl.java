@@ -7,6 +7,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.gk.lib.bluetooth.IBluetooth;
+import com.gk.lib.bluetooth.bean.BluetoothInfo;
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
 import com.gk.lib.bluetooth.engine.ThreadPool;
 import com.gk.lib.bluetooth.engine.listener.ConnectDeviceListener;
@@ -50,6 +51,10 @@ public final class CbtClientImpl implements IBluetooth {
     @Override
     public void connect(BluetoothDevice device) {
         Log.i(tag, "connect:" + device.getName());
+        if (isConnected(device)) {
+            Log.w(tag, device.getName() + " has connected!");
+            return;
+        }
         BluetoothSocket socket = null;
         try {
             socket = device.createRfcommSocketToServiceRecord(SPP_UUID);
@@ -59,34 +64,35 @@ public final class CbtClientImpl implements IBluetooth {
         if (socket == null) {
             return;
         }
-
-        BtConnectionRunnable runnable = new BtConnectionRunnable(socket, new ConnectDeviceListener() {
+        BluetoothInfo info = new BluetoothInfo(socket, device);
+        BtConnectionRunnable runnable = new BtConnectionRunnable(info, new ConnectDeviceListener() {
             @Override
-            public void onConnectDeviceSuccess(BluetoothSocket socket) {
-                bluetoothSocket = socket;
+            public void onConnectDeviceSuccess(BluetoothInfo bluetoothInfo) {
+                bluetoothSocket = bluetoothInfo.socket;
                 try {
-                    inputStream = new DataInputStream(socket.getInputStream());
+                    inputStream = new DataInputStream(bluetoothInfo.socket.getInputStream());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
                 try {
-                    outputStream = new DataOutputStream(socket.getOutputStream());
+                    outputStream = new DataOutputStream(bluetoothInfo.socket.getOutputStream());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                mBtReceiver.getBluetoothListener().onConnectDeviceSuccess(bluetoothInfo.device);
             }
 
             @Override
-            public void onConnectDeviceFailure(BluetoothSocket socket, String msg) {
-                if (socket !=null) {
+            public void onConnectDeviceFailure(BluetoothInfo bluetoothInfo, String msg) {
+                if (bluetoothInfo.socket !=null) {
                     try {
-                        socket.close();
+                        bluetoothInfo.socket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+                mBtReceiver.getBluetoothListener().onConnectDeviceFailure(bluetoothInfo.device, msg);
             }
         });
         threadPool.submit(runnable);
