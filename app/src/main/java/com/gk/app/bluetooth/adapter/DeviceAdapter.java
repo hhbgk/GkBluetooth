@@ -12,9 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gk.app.bluetooth.R;
+import com.gk.app.bluetooth.listener.OnItemClickListener;
 import com.gk.app.bluetooth.main.App;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,6 +28,7 @@ import java.util.List;
 public final class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.MyHolder> {
     private final List<BluetoothDevice> mDevices = new ArrayList<>();
     private Context context;
+    private OnItemClickListener<BluetoothDevice> onItemClickListener;
 
     public DeviceAdapter() {
         context = App.getApplication();
@@ -34,8 +37,8 @@ public final class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.MyHo
     @NonNull
     @Override
     public DeviceAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_device, parent);
-        return new MyHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_device, parent, false);
+        return new MyHolder(v, mDevices, onItemClickListener);
     }
 
     @Override
@@ -60,9 +63,13 @@ public final class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.MyHo
     static class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView name;
         final TextView address;
+        final OnItemClickListener listener;
+        final List<BluetoothDevice> devices;
 
-        MyHolder(View itemView) {
+        MyHolder(View itemView, List<BluetoothDevice> devices, OnItemClickListener listener) {
             super(itemView);
+            this.listener = listener;
+            this.devices = devices;
             itemView.setOnClickListener(this);
             name = itemView.findViewById(R.id.name);
             address = itemView.findViewById(R.id.address);
@@ -70,15 +77,23 @@ public final class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.MyHo
 
         @Override
         public void onClick(View v) {
-//            int pos = getAdapterPosition();
-//            if (pos >= 0 && pos < mDevices.size()) {
-//                mListener.onItemClick(mDevices.get(pos).dev);
-//            }
+            int pos = getLayoutPosition();
+            if (pos >= 0 && pos < devices.size()) {
+                listener.onItemClick(v, devices.get(pos), pos);
+            }
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener<BluetoothDevice> listener) {
+        onItemClickListener = listener;
+    }
+
+    public void addAll(Collection<? extends BluetoothDevice> devices) {
+        mDevices.addAll(mDevices.size(), devices);
     }
 
     public void add(BluetoothDevice dev) {
         if (mDevices.contains(dev)) return;
-        mDevices.add(dev);
+        mDevices.add(mDevices.size(), dev);
     }
 }

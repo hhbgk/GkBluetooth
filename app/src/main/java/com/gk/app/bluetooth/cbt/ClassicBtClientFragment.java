@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gk.app.bluetooth.R;
 import com.gk.app.bluetooth.adapter.DeviceAdapter;
 import com.gk.app.bluetooth.base.BaseFragment;
+import com.gk.app.bluetooth.listener.OnItemClickListener;
 import com.gk.app.bluetooth.util.GLog;
 import com.gk.lib.bluetooth.BluetoothClient;
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
@@ -23,13 +25,15 @@ import com.gk.lib.bluetooth.callback.OnBluetoothListener;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ClassicBtClientFragment extends BaseFragment {
+public class ClassicBtClientFragment extends BaseFragment implements View.OnClickListener {
     private RecyclerView rv;
     private TextView tvTips;
     private EditText etInputMsg;
     private EditText etInputFile;
     private TextView tvLogs;
-    private final DeviceAdapter mBtDevAdapter = new DeviceAdapter();
+    private Button btnRescan;
+
+    private final DeviceAdapter mAdapter = new DeviceAdapter();
 
     public ClassicBtClientFragment() {
         // Required empty public constructor
@@ -43,19 +47,33 @@ public class ClassicBtClientFragment extends BaseFragment {
         etInputMsg = view.findViewById(R.id.input_msg);
         etInputFile = view.findViewById(R.id.input_file);
         tvLogs = view.findViewById(R.id.tv_log);
+        btnRescan = view.findViewById(R.id.btn_rescan);
+        btnRescan.setOnClickListener(this);
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mAdapter.setOnItemClickListener(onItemClickListener);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        rv.setAdapter(mBtDevAdapter);
-
-//        mReceiver = new ClassicBtReceiver(App.getApplication(), this);//注册蓝牙广播
-//        BluetoothAdapter.getDefaultAdapter().startDiscovery();
+        rv.setAdapter(mAdapter);
+        mAdapter.addAll(BluetoothClient.getInstance().getBondedDevices());
         BluetoothClient.getInstance().startScanning();
         BluetoothClient.getInstance().registerBluetoothListener(onBluetoothListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BluetoothClient.getInstance().destroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == btnRescan) {
+
+        }
     }
 
     private final OnBluetoothListener onBluetoothListener = new OnBluetoothListener() {
@@ -91,12 +109,27 @@ public class ClassicBtClientFragment extends BaseFragment {
 
         @Override
         public void onFound(BluetoothDevice device) {
-            GLog.i(tag, "onFound:" + device.getName());
+            GLog.i(tag, "onFound:" + device.getName() + ":" + device.getAddress());
+            mAdapter.add(device);
+            mAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onSwitchStateChanged(int state) {
             GLog.i(tag, "onSwitchStateChanged:" + state);
+        }
+    };
+
+    private final OnItemClickListener<BluetoothDevice> onItemClickListener
+            = new OnItemClickListener<BluetoothDevice>() {
+        @Override
+        public void onItemClick(View view, BluetoothDevice device, int position) {
+            GLog.e(tag, "onItemClick:" + BluetoothClient.getInstance().isConnected(device));
+            BluetoothClient.getInstance().connect(device);
+        }
+
+        @Override
+        public void onItemLongClick(View view, BluetoothDevice device, int position) {
         }
     };
 }
