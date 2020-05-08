@@ -8,8 +8,8 @@ android {
         applicationId "com.gk.app.bluetooth"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 100
+        versionName "0.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
