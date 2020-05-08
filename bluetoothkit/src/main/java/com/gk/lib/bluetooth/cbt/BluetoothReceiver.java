@@ -24,6 +24,7 @@ import static android.bluetooth.BluetoothAdapter.STATE_OFF;
 public final class BluetoothReceiver extends BroadcastReceiver {
     private String tag = getClass().getSimpleName();
     private OnBluetoothListener onBluetoothListener = new SimpleBluetoothListener();
+    private boolean isScanning = false;
 
     public IntentFilter getIntentFilter() {
         IntentFilter filter = new IntentFilter();
@@ -78,14 +79,14 @@ public final class BluetoothReceiver extends BroadcastReceiver {
              * 蓝牙开始搜索
              */
             case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-                Log.i(tag, "蓝牙开始搜索");
+                isScanning = true;
                 onBluetoothListener.onScanningStart();
                 break;
             /*
              * 蓝牙搜索结束
              */
             case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-                Log.i(tag, "蓝牙扫描结束");
+                isScanning = false;
                 onBluetoothListener.onScanningStop();
                 break;
             /*
@@ -153,6 +154,10 @@ public final class BluetoothReceiver extends BroadcastReceiver {
             default:
                 break;
         }
+    }
+
+    public boolean isScanning() {
+        return isScanning;
     }
 
     public void setOnBluetoothListener(OnBluetoothListener listener) {
