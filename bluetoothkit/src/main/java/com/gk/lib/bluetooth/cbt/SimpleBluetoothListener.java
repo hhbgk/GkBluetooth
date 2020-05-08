@@ -12,12 +12,12 @@ import com.gk.lib.bluetooth.callback.OnBluetoothListener;
  */
 public final class SimpleBluetoothListener extends OnBluetoothListener {
     @Override
-    public void onStart() {
+    public void onScanningStart() {
 
     }
 
     @Override
-    public void onStop() {
+    public void onScanningStop() {
 
     }
 

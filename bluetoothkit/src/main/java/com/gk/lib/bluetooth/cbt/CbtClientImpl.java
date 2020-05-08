@@ -48,5 +48,8 @@ public final class CbtClientImpl implements IBluetooth {
         if (context != null) {
             context.unregisterReceiver(mBtReceiver);
         }
+        if (mBtReceiver.isScanning()) {
+            stopScanning();
+        }
     }
 }
