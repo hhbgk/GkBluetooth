@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
-import com.gk.lib.bluetooth.cbt.CbtClientImpl;
+import com.gk.lib.bluetooth.core.cbt.CbtClientImpl;
 
 import java.lang.ref.SoftReference;
 import java.util.Set;

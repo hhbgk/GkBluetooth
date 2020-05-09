@@ -1,4 +1,4 @@
-package com.gk.lib.bluetooth.cbt;
+package com.gk.lib.bluetooth.core;
 
 import android.bluetooth.BluetoothDevice;
 

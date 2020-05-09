@@ -1,4 +1,4 @@
-package com.gk.lib.bluetooth.cbt;
+package com.gk.lib.bluetooth.core.cbt;
 
 import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothAdapter;
@@ -9,9 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
+import com.gk.lib.bluetooth.core.SimpleBluetoothListener;
 
 import static android.bluetooth.BluetoothAdapter.STATE_OFF;
 
