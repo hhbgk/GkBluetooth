@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
+import com.gk.lib.bluetooth.core.ble.BleClientImpl;
 import com.gk.lib.bluetooth.core.cbt.CbtClientImpl;
 
 import java.lang.ref.SoftReference;
@@ -39,7 +40,8 @@ public final class BluetoothClient implements IBluetooth {
         if (softReference == null || softReference.get() == null) {
             throw new IllegalStateException("Invoke initialize() first!");
         }
-        client = new CbtClientImpl(softReference.get());
+//        client = new CbtClientImpl(softReference.get());
+        client = new BleClientImpl(softReference.get());
     }
 
     @Override
@@ -70,6 +72,11 @@ public final class BluetoothClient implements IBluetooth {
     @Override
     public void stopScanning() {
         client.stopScanning();
+    }
+
+    @Override
+    public void tryToSend(byte[] data) {
+        client.tryToSend(data);
     }
 
     @Override
