@@ -9,6 +9,7 @@ import android.util.Log;
 import com.gk.lib.bluetooth.IBluetooth;
 import com.gk.lib.bluetooth.bean.BluetoothInfo;
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
+import com.gk.lib.bluetooth.core.AbstractBluetooth;
 import com.gk.lib.bluetooth.engine.ThreadPool;
 import com.gk.lib.bluetooth.engine.listener.ConnectDeviceListener;
 import com.gk.lib.bluetooth.engine.runnable.BtConnectionRunnable;
@@ -25,14 +26,14 @@ import java.util.UUID;
  * Date:20-5-7
  * UpdateRemark:
  */
-public final class CbtClientImpl implements IBluetooth {
-    private String tag = getClass().getSimpleName();
+public final class CbtClientImpl extends AbstractBluetooth {
     private BluetoothReceiver mBtReceiver;
     private Context context;
     private ThreadPool threadPool;
     private BluetoothSocket bluetoothSocket;
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
+    private DataReceivedTask dataReceivedTask;
     private static final UUID SPP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     public CbtClientImpl(Context context) {
@@ -71,6 +72,9 @@ public final class CbtClientImpl implements IBluetooth {
                 bluetoothSocket = bluetoothInfo.socket;
                 try {
                     inputStream = new DataInputStream(bluetoothInfo.socket.getInputStream());
+                    if (dataReceivedTask != null) dataReceivedTask.stopRunning();
+                    dataReceivedTask = new DataReceivedTask(inputStream, mBtReceiver.getBluetoothListener());
+                    dataReceivedTask.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -141,6 +145,19 @@ public final class CbtClientImpl implements IBluetooth {
     }
 
     @Override
+    public void tryToSend(byte[] data) {
+        if (outputStream != null) {
+            try {
+                outputStream.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(tag, "No output stream");
+        }
+    }
+
+    @Override
     public void registerBluetoothListener(OnBluetoothListener listener) {
         mBtReceiver.setOnBluetoothListener(listener);
     }
@@ -159,5 +176,6 @@ public final class CbtClientImpl implements IBluetooth {
             stopScanning();
         }
         if (threadPool != null) threadPool.stop();
+        if (dataReceivedTask != null) dataReceivedTask.stopRunning();
     }
 }

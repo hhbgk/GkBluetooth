@@ -19,6 +19,7 @@ public interface IBluetooth {
     boolean isConnected(BluetoothDevice device);
     void startScanning();
     void stopScanning();
+    void tryToSend(byte[] data);
     void registerBluetoothListener(OnBluetoothListener listener);
     void unregisterBluetoothListener(OnBluetoothListener listener);
     void destroy();
