@@ -57,7 +57,7 @@ public final class BleClientImpl extends AbstractBluetooth {
 
     @Override
     public Set<BluetoothDevice> getBondedDevices() {
-        return null;
+        return BluetoothAdapter.getDefaultAdapter().getBondedDevices();
     }
 
     @Override
@@ -198,6 +198,7 @@ public final class BleClientImpl extends AbstractBluetooth {
             Log.i(tag, "onCharacteristicWrite: status=" + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(tag, "onCharacteristicWrite: write success");
+                onBluetoothListener.onSent(characteristic.getValue());
             }
         }
 
