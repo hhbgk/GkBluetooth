@@ -20,20 +20,20 @@ import com.gk.app.bluetooth.adapter.DeviceAdapter;
 import com.gk.app.bluetooth.base.BaseFragment;
 import com.gk.app.bluetooth.listener.OnItemClickListener;
 import com.gk.app.bluetooth.util.GkLog;
+import com.gk.app.bluetooth.util.ToastUtil;
 import com.gk.lib.bluetooth.BluetoothClient;
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
+import com.gk.lib.bluetooth.util.HandlerUtil;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class BleClientFragment extends BaseFragment implements View.OnClickListener {
     private RecyclerView rv;
-    private EditText mWriteET;
+    private EditText etWriteData;
     private TextView mTips;
     private Button btnRescan;
-    private DeviceAdapter mBleDevAdapter;
-    private BluetoothGatt mBluetoothGatt;
-    private boolean isConnected = false;
+    private Button btnWrite;
     private final DeviceAdapter mAdapter = new DeviceAdapter();
 
     public BleClientFragment() {
@@ -47,6 +47,9 @@ public class BleClientFragment extends BaseFragment implements View.OnClickListe
         rv = v.findViewById(R.id.rv_ble);
         btnRescan = v.findViewById(R.id.btn_scan);
         btnRescan.setOnClickListener(this);
+        btnWrite = v.findViewById(R.id.btn_write);
+        btnWrite.setOnClickListener(this);
+        etWriteData = v.findViewById(R.id.et_write);
         return v;
     }
 
@@ -56,15 +59,24 @@ public class BleClientFragment extends BaseFragment implements View.OnClickListe
         mAdapter.setOnItemClickListener(onItemClickListener);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(mAdapter);
-
+        mAdapter.addAll(BluetoothClient.getInstance().getBondedDevices());
         BluetoothClient.getInstance().registerBluetoothListener(onBluetoothListener);
         BluetoothClient.getInstance().startScanning();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        BluetoothClient.getInstance().destroy();
     }
 
     @Override
     public void onClick(View v) {
         if (v == btnRescan) {
             BluetoothClient.getInstance().startScanning();
+        } else if (v == btnWrite) {
+            String text = etWriteData.getText().toString();
+            BluetoothClient.getInstance().tryToSend(text.getBytes());
         }
     }
 
@@ -113,8 +125,28 @@ public class BleClientFragment extends BaseFragment implements View.OnClickListe
         }
 
         @Override
-        public void onConnectDeviceSuccess(BluetoothDevice device) {
-            GkLog.i(tag, "onConnectDeviceSuccess:" + device.getName());
+        public void onSent(final byte[] data) {
+            HandlerUtil.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                    ToastUtil.showToastLong("Successful sent： " + new String(data));
+                }
+            });
+        }
+
+        @Override
+        public void onConnectDeviceSuccess(final BluetoothDevice device) {
+            boolean bondState = device.getBondState() == BluetoothDevice.BOND_BONDED;
+            GkLog.i(tag, "onConnectDeviceSuccess:" + device.getName() + ", " + bondState);
+
+            HandlerUtil.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                    ToastUtil.showToastLong("Successful connected " + device.getName());
+                }
+            });
         }
 
         @Override
