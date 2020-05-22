@@ -2,6 +2,7 @@ package com.gk.app.bluetooth.main;
 
 import android.app.Application;
 
+import com.gk.app.bluetooth.util.ToastUtil;
 import com.gk.lib.bluetooth.BluetoothClient;
 
 /**
@@ -17,6 +18,7 @@ public final class App extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
+        ToastUtil.init(this);
         BluetoothClient.initialize(this);
     }
 
