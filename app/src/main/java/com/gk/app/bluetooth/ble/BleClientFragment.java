@@ -31,7 +31,7 @@ import com.gk.lib.bluetooth.util.HandlerUtil;
 public class BleClientFragment extends BaseFragment implements View.OnClickListener {
     private RecyclerView rv;
     private EditText etWriteData;
-    private TextView mTips;
+    private Button btnNotification;
     private Button btnRescan;
     private Button btnWrite;
     private final DeviceAdapter mAdapter = new DeviceAdapter();
@@ -50,6 +50,8 @@ public class BleClientFragment extends BaseFragment implements View.OnClickListe
         btnWrite = v.findViewById(R.id.btn_write);
         btnWrite.setOnClickListener(this);
         etWriteData = v.findViewById(R.id.et_write);
+        btnNotification = v.findViewById(R.id.btn_notify);
+        btnNotification.setOnClickListener(this);
         return v;
     }
 
@@ -77,6 +79,8 @@ public class BleClientFragment extends BaseFragment implements View.OnClickListe
         } else if (v == btnWrite) {
             String text = etWriteData.getText().toString();
             BluetoothClient.getInstance().tryToSend(text.getBytes());
+        } else if (v == btnNotification) {
+
         }
     }
 
