@@ -63,10 +63,10 @@ public final class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.MyHo
     static class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView name;
         final TextView address;
-        final OnItemClickListener listener;
+        final OnItemClickListener<BluetoothDevice> listener;
         final List<BluetoothDevice> devices;
 
-        MyHolder(View itemView, List<BluetoothDevice> devices, OnItemClickListener listener) {
+        MyHolder(View itemView, List<BluetoothDevice> devices, OnItemClickListener<BluetoothDevice> listener) {
             super(itemView);
             this.listener = listener;
             this.devices = devices;
