@@ -255,7 +255,7 @@ public final class BleClientImpl extends AbstractBluetooth {
 
         for (BluetoothGattService service : services) {
             UUID serviceUUID = service.getUuid();
-
+            Log.i(tag, "serviceUUID:" + serviceUUID.toString());
             Map<UUID, BluetoothGattCharacteristic> map = newProfiles.get(serviceUUID);
 
             if (map == null) {
@@ -267,7 +267,10 @@ public final class BleClientImpl extends AbstractBluetooth {
 
             for (BluetoothGattCharacteristic character : characters) {
                 if (setCharacteristicNotification(character)) {
-                    Log.e(tag, "support Notification:" + character.getService().getUuid());
+                    Log.i(tag, "support Notification:" + character.getService().getUuid());
+                } else {
+                    Log.w(tag, "No Notification:" + character.getService().getUuid()
+                            +", getUuid=" + character.getUuid());
                 }
                 UUID characterUUID = character.getUuid();
                 map.put(characterUUID, character);
