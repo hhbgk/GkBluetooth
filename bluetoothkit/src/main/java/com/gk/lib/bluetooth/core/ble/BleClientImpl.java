@@ -11,7 +11,9 @@ import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.gk.lib.bluetooth.callback.OnBluetoothListener;
@@ -62,7 +64,12 @@ public final class BleClientImpl extends AbstractBluetooth {
 
     @Override
     public void connect(BluetoothDevice device) {
-        bluetoothGatt = device.connectGatt(context, false, bluetoothGattCallback);
+        if (Build.VERSION.SDK_INT >= 23) {
+            bluetoothGatt = device.connectGatt(context, false, bluetoothGattCallback, BluetoothDevice.TRANSPORT_LE);
+        } else {
+            bluetoothGatt = device.connectGatt(context, false, bluetoothGattCallback);
+        }
+        if (bluetoothGatt == null) Log.e(tag, "Connect error!");
     }
 
     @Override
@@ -81,7 +88,23 @@ public final class BleClientImpl extends AbstractBluetooth {
     @Override
     public void startScanning() {
         isScanning = true;
-        bluetoothLeScanner.startScan(scanCallback);
+        if (Build.VERSION.SDK_INT >= 21 && bluetoothLeScanner != null) {
+            ScanSettings scanSettings;
+            int scanMode = ScanSettings.SCAN_MODE_BALANCED; //修改搜索BLE模式 -- 均衡模式
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                scanSettings = new ScanSettings.Builder()
+                        .setScanMode(scanMode)
+                        .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
+                        .build();
+            } else {
+                scanSettings = new ScanSettings.Builder()
+                        .setScanMode(scanMode)
+                        .build();
+            }
+            bluetoothLeScanner.startScan(null, scanSettings, scanCallback);
+        } else {
+            BluetoothAdapter.getDefaultAdapter().startLeScan(leScanCallback);
+        }
         onBluetoothListener.onScanningStart();
         HandlerUtil.remove(delayToCancel);
         HandlerUtil.postDelayed(delayToCancel, 3000);
@@ -91,7 +114,11 @@ public final class BleClientImpl extends AbstractBluetooth {
     public void stopScanning() {
         if (isScanning) {
             isScanning = false;
-            bluetoothLeScanner.stopScan(scanCallback); //停止扫描
+            if (Build.VERSION.SDK_INT >= 21 && bluetoothLeScanner != null) {
+                bluetoothLeScanner.stopScan(scanCallback);
+            } else {
+                BluetoothAdapter.getDefaultAdapter().stopLeScan(leScanCallback);
+            }
         }
     }
 
@@ -124,6 +151,13 @@ public final class BleClientImpl extends AbstractBluetooth {
         public void run() {
             stopScanning();
             onBluetoothListener.onScanningStop();
+        }
+    };
+
+    private final BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
+            onBluetoothListener.onFound(bluetoothDevice);
         }
     };
 
